@@ -1,5 +1,5 @@
-# davidsword.ca Custom Plugins
+# davidsword.ca Custom WordPress plugins
 
-A bunch of small custom plugins for my website.
+A bunch of single-file custom WordPress plugins for [my website](https://davidsword.ca/).
 
-See each file for readme.
+See each file for description.
