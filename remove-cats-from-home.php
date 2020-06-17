@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: Remove categories from Home
+ * Plugin Name: Remove select categories from Home/blog
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Remove categories from Home
+ * Description: Remove select categories from Home/blog
  * Version: 0.0.1
  * Author: David Sword
  * Author URI: https://davidsword.ca/

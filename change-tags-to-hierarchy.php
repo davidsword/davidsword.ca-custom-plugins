@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: Tags to Hierarchy
+ * Plugin Name: Change Tags to be Hierarchical
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Convert Tags to Hierarchy strcture
+ * Description: Convert Tags to be Hierarchical
  * Version: 0.0.1
  * Author: David Sword
  * Author URI: https://davidsword.ca/
@@ -12,16 +12,16 @@
 
 // @see https://css-tricks.com/how-and-why-to-convert-wordpress-tags-from-flat-to-hierarchical/
 function wd_hierarchical_tags_register() {
-  
+
 	global $wp_rewrite;
-  
+
 	$rewrite = array(
 		'hierarchical' => false, // Maintains tag permalink structure
 		'slug'         => get_option( 'tag_base' ) ? get_option( 'tag_base' ) : 'tag',
 		'with_front'   => ! get_option( 'tag_base' ) || $wp_rewrite->using_index_permalinks(),
 		'ep_mask'      => EP_TAGS,
 	);
-  
+
 	$labels = array(
 		'name'                       => _x( 'Tags', 'Taxonomy General Name', 'hierarchical_tags' ),
 		'singular_name'              => _x( 'Tag', 'Taxonomy Singular Name', 'hierarchical_tags' ),
@@ -41,7 +41,7 @@ function wd_hierarchical_tags_register() {
 		'search_items'               => __( 'Search Tags', 'hierarchical_tags' ),
 		'not_found'                  => __( 'Not Found', 'hierarchical_tags' ),
 	);
-  
+
 	register_taxonomy(
 		'post_tag',
 		'post',
@@ -55,7 +55,7 @@ function wd_hierarchical_tags_register() {
 			'show_admin_column' => true,
 			'_builtin'          => true,
 			'show_in_rest'      => true,
-		) 
+		)
 	);
 }
 add_action( 'init', 'wd_hierarchical_tags_register' );

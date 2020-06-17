@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: Full Post Thumbnail Size
+ * Plugin Name: Change Post Thumbnail Size to Full
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description:
+ * Description: Change Post Thumbnail Size to Full
  * Version: 0.0.1
  * Author: David Sword
  * Author URI: https://davidsword.ca/
