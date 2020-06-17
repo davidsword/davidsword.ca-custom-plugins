@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: Change Site Icon To Gravitar
+ * Plugin Name: Change Site Icon To Gravatar
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Change Site Icon To Gravitar
+ * Description: Change Site Icon To Gravatar
  * Version: 0.0.1
  * Author: David Sword
  * Author URI: https://davidsword.ca/
