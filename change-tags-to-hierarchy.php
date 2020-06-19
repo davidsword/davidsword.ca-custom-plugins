@@ -11,7 +11,7 @@
  */
 
 // @see https://css-tricks.com/how-and-why-to-convert-wordpress-tags-from-flat-to-hierarchical/
-function wd_hierarchical_tags_register() {
+add_action( 'init', function () {
 	$labels = [
 		'name'                       => _x( 'Tags', 'Taxonomy General Name', 'hierarchical_tags' ),
 		'singular_name'              => _x( 'Tag', 'Taxonomy Singular Name', 'hierarchical_tags' ),
@@ -36,19 +36,24 @@ function wd_hierarchical_tags_register() {
 		'post_tag',
 		'post',
 		[
-			'hierarchical'      => true, // Was false, now set to true.
-			'labels'            => $labels,
-			'query_var'         => false,
-			'public'            => false, // back-end filtering only.
+			'hierarchical'       => true,
+			'labels'             => $labels,
+			'query_var'          => false,
+			'public'             => false, // back-end filtering only.
 			'publicly_queryable' => false, // back-end filtering only.
-			'show_tagcloud'     => false, // back-end filtering only.
-			'rewrite'           => false,
-			'show_admin_column' => true,
-			'show_ui'           => true,
-			'show_admin_column' => true,
-			'_builtin'          => true,
-			'show_in_rest'      => true,
+			'show_tagcloud'      => false, // back-end filtering only.
+			'rewrite'            => false,
+			'show_admin_column'  => true,
+			'show_ui'            => true,
+			'show_admin_column'  => true,
+			'_builtin'           => true,
+			'show_in_rest'       => true,
+			'rewrite'           => [
+				'hierarchical' => false,
+				'slug'         => get_option( 'tag_base' ) ? get_option( 'tag_base' ) : 'tag',
+				'with_front'   => false,
+				'ep_mask'      => EP_TAGS,
+			],
 		]
 	);
-}
-add_action( 'init', 'wd_hierarchical_tags_register' );
+}, 99 );
