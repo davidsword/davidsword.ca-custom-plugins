@@ -16,6 +16,7 @@ add_action(
 		if ( is_admin() || is_feed() || is_search() )
 			return $content;
 
+		// @TODO this should be dynamic, not hard coded.
 		$tags = [
 			118 => [
 				'name'          => 'archived',
