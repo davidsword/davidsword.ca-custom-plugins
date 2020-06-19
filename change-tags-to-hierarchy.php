@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: Change Tags to be Hierarchical
+ * Plugin Name: Change Tags to be Hierarchical & Private
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Convert Tags to be Hierarchical
+ * Description: Convert Tags to be Hierarchical & Private
  * Version: 0.0.1
  * Author: David Sword
  * Author URI: https://davidsword.ca/
@@ -12,8 +12,6 @@
 
 // @see https://css-tricks.com/how-and-why-to-convert-wordpress-tags-from-flat-to-hierarchical/
 function wd_hierarchical_tags_register() {
-	global $wp_rewrite;
-
 	$labels = [
 		'name'                       => _x( 'Tags', 'Taxonomy General Name', 'hierarchical_tags' ),
 		'singular_name'              => _x( 'Tag', 'Taxonomy Singular Name', 'hierarchical_tags' ),
@@ -39,15 +37,13 @@ function wd_hierarchical_tags_register() {
 		'post',
 		[
 			'hierarchical'      => true, // Was false, now set to true.
-			'query_var'         => 'tag',
 			'labels'            => $labels,
-			'rewrite'           => [
-				'hierarchical' => false, // Maintains tag permalink structure.
-				'slug'         => get_option( 'tag_base' ) ? get_option( 'tag_base' ) : 'tag',
-				'with_front'   => ! get_option( 'tag_base' ) || $wp_rewrite->using_index_permalinks(),
-				'ep_mask'      => EP_TAGS,
-			],
+			'query_var'         => false,
 			'public'            => false, // back-end filtering only.
+			'publicly_queryable' => false, // back-end filtering only.
+			'show_tagcloud'     => false, // back-end filtering only.
+			'rewrite'           => false,
+			'show_admin_column' => true,
 			'show_ui'           => true,
 			'show_admin_column' => true,
 			'_builtin'          => true,
