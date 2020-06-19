@@ -13,7 +13,7 @@
 /**
  * Add here instead of in Customizer for version control.
  */
-add_action( 'wp_footer', function() {
+add_action( 'wp_head', function() {
 	?>
 	<!-- via davidsword/davidsword.ca-custom-plugins/change-twentyfifteen-custom-css.php -->
 	<style type='text/css'>
@@ -103,4 +103,4 @@ add_action( 'wp_footer', function() {
 		}
 	</style>
 	<?php
-}, 11 );
+}, 99 );
