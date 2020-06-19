@@ -37,8 +37,9 @@ add_action( 'wp_head', function() {
 			font-weight: 300;
 		}
 
-		/* No author deets */
+		/* No author, tag, or format deets */
 		html .entry-footer .byline,
+		html .entry-footer .tags-links,
 		html .entry-footer .entry-format {
 			display: none;
 		}
