@@ -44,7 +44,7 @@ add_action(
 					esc_attr($flag['colour_border']),
 					esc_html($flag['msg'])
 				);
-				$content = $flag_html . $content . $flag_html;
+				$content = $flag_html . $content;
 			}
 		}
 
