@@ -35,12 +35,13 @@ add_action(
 		foreach ( $tags as $tag_id => $flag ) {
 			if ( has_tag( $tag_id ) ) {
 				$flag_html = sprintf(
-					"<p class='tag_flag' style='
+					"<p class='tag_flag tag_flag-%s' style='
 						padding: 10px;
 						text-align:center;
 						background-color:%s;
 						border: 1px solid %s;
 					'>%s</p>",
+					esc_attr($flag['name']),
 					esc_attr($flag['colour']),
 					esc_attr($flag['colour_border']),
 					esc_html($flag['msg'])
