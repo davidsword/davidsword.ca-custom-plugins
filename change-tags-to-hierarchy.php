@@ -12,20 +12,12 @@
 
 // @see https://css-tricks.com/how-and-why-to-convert-wordpress-tags-from-flat-to-hierarchical/
 function wd_hierarchical_tags_register() {
-
 	global $wp_rewrite;
 
-	$rewrite = array(
-		'hierarchical' => false, // Maintains tag permalink structure
-		'slug'         => get_option( 'tag_base' ) ? get_option( 'tag_base' ) : 'tag',
-		'with_front'   => ! get_option( 'tag_base' ) || $wp_rewrite->using_index_permalinks(),
-		'ep_mask'      => EP_TAGS,
-	);
-
-	$labels = array(
+	$labels = [
 		'name'                       => _x( 'Tags', 'Taxonomy General Name', 'hierarchical_tags' ),
 		'singular_name'              => _x( 'Tag', 'Taxonomy Singular Name', 'hierarchical_tags' ),
-		'menu_name'                  => __( 'Taxonomy', 'hierarchical_tags' ),
+		'menu_name'                  => __( 'Tags', 'hierarchical_tags' ),
 		'all_items'                  => __( 'All Tags', 'hierarchical_tags' ),
 		'parent_item'                => __( 'Parent Tag', 'hierarchical_tags' ),
 		'parent_item_colon'          => __( 'Parent Tag:', 'hierarchical_tags' ),
@@ -40,22 +32,27 @@ function wd_hierarchical_tags_register() {
 		'popular_items'              => __( 'Popular Tags', 'hierarchical_tags' ),
 		'search_items'               => __( 'Search Tags', 'hierarchical_tags' ),
 		'not_found'                  => __( 'Not Found', 'hierarchical_tags' ),
-	);
+	];
 
 	register_taxonomy(
 		'post_tag',
 		'post',
-		array(
+		[
 			'hierarchical'      => true, // Was false, now set to true.
 			'query_var'         => 'tag',
 			'labels'            => $labels,
-			'rewrite'           => $rewrite,
-			'public'            => true,
+			'rewrite'           => [
+				'hierarchical' => false, // Maintains tag permalink structure.
+				'slug'         => get_option( 'tag_base' ) ? get_option( 'tag_base' ) : 'tag',
+				'with_front'   => ! get_option( 'tag_base' ) || $wp_rewrite->using_index_permalinks(),
+				'ep_mask'      => EP_TAGS,
+			],
+			'public'            => false, // back-end filtering only.
 			'show_ui'           => true,
 			'show_admin_column' => true,
 			'_builtin'          => true,
 			'show_in_rest'      => true,
-		)
+		]
 	);
 }
 add_action( 'init', 'wd_hierarchical_tags_register' );
