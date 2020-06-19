@@ -38,7 +38,7 @@ add_action( 'init', function () {
 		[
 			'hierarchical'       => true,
 			'labels'             => $labels,
-			'query_var'          => false,
+			'query_var'          => 'tag',
 			'public'             => false, // back-end filtering only.
 			'publicly_queryable' => false, // back-end filtering only.
 			'show_tagcloud'      => false, // back-end filtering only.
