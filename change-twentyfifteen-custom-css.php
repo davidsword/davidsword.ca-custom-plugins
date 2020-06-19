@@ -16,7 +16,7 @@
 add_action( 'wp_footer', function() {
 	?>
 	<!-- via davidsword/davidsword.ca-custom-plugins/change-twentyfifteen-custom-css.php -->
-	<script type='text/css'>
+	<style type='text/css'>
 		/* sidebar header logo */
 		.custom-logo {
 			max-height: 40px;
@@ -101,6 +101,6 @@ add_action( 'wp_footer', function() {
 		.current-post-parent a {
 			font-weight: bold;
 		}
-	</script>
+	</style>
 	<?php
 }, 11 );
