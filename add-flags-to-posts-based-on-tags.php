@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * Plugin Name: Add Archived and WIP Flags to Posts based on Tags
+ * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
+ * Description: Add Flags to Posts based on Tags
+ * Version: 0.0.1
+ * Author: David Sword
+ * Author URI: https://davidsword.ca/
+ * License: GNU GENERAL PUBLIC LICENSE
+ */
+
+add_action(
+	'the_content',
+	function( $content ) {
+		if ( is_admin() || is_feed() || is_search() )
+			return $content;
+
+		$tags = [
+			118 => [
+				'name'          => 'archived',
+				'colour'        => '#FFFCDA',
+				'colour_border' => '#EFE5AB',
+				'msg'           => 'This project has been archived. It is no longer maintained.',
+			],
+			110 => [
+				'name'          => 'work-in-progress',
+				'colour'        => '#F3FCFF',
+				'colour_border' => '#ABE2EF',
+				'msg'           => 'This project is incomplete, a work in progress. ',
+			],
+		];
+
+		foreach ( $tags as $tag_id => $flag ) {
+			if ( has_tag( $tag_id ) ) {
+				$flag_html = sprintf(
+					"<p class='tag_flag' style='
+						padding: 10px;
+						text-align:center;
+						background-color:%s;
+						border: 1px solid %s;
+					'>%s</p>",
+					esc_attr($flag['colour']),
+					esc_attr($flag['colour_border']),
+					esc_html($flag['msg'])
+				);
+				$content = $flag_html . $content . $flag_html;
+			}
+		}
+
+		return $content;
+	}
+);
