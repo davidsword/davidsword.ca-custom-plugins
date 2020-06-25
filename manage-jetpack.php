@@ -40,3 +40,10 @@ add_filter( 'option_jetpack_active_modules', function ( $modules ) {
 	}
 	return $modules;
 } );
+
+// a 1720x image is 3mb from the cdn without this.
+add_filter( 'jetpack_photon_pre_args', function ( $args ) {
+	$args['quality'] = 80;
+	$args['strip'] = 'all';
+	return $args;
+} );
