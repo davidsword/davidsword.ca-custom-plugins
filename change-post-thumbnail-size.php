@@ -10,8 +10,13 @@
  * License: GNU GENERAL PUBLIC LICENSE
  */
 
+add_action( 'after_setup_theme', function () {
+	add_image_size( 'featured-image', 1742, 1400 );
+} );
+
+
 // see https://developer.wordpress.org/reference/functions/get_the_post_thumbnail/
 // twenty15 theme has tiny header images, full is best for hidpi.
-add_filter( 'post_thumbnail_size', function( $size ){
-	return 'full';
+add_filter( 'post_thumbnail_size', function( $size ) {
+	return 'featured-image';
 } );
