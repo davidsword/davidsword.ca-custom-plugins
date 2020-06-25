@@ -11,7 +11,7 @@
  */
 
 add_action( 'after_setup_theme', function () {
-	add_image_size( 'featured-image', 1742, 1400 ); // specific size for TwentyFiffteen theme on desktop @2x.
+	add_image_size( 'featured-image', 871, 800 ); // specific size for TwentyFiffteen theme.
 } );
 
 
