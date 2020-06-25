@@ -43,9 +43,9 @@ add_filter( 'option_jetpack_active_modules', function ( $modules ) {
 
 // a 1720x image is 3mb from the cdn without this.
 add_filter( 'jetpack_photon_pre_args', function ( $args ) {
-	if ( $args['w'] > 1000 )
-		$args['w'] = 1000;
-	$args['quality'] = 60; // @TODO only reduce when $args reveal its an image >1000px
+	if ( $args['w'] > 1200 )
+		$args['w'] = 1200;
+	$args['quality'] = 70; // @TODO only reduce when $args reveal its an image >1000px
 	$args['strip']   = 'all';
 	return $args;
 } );
