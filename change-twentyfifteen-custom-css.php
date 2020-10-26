@@ -20,6 +20,8 @@ add_action( 'wp_head', function() {
 		/* sidebar header logo */
 		.custom-logo {
 			max-height: 40px;
+			border-radius: 50%;
+			overflow:hidden;
 		}
 
 		/* change font */

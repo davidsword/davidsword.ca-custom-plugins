@@ -16,8 +16,25 @@
 add_filter(
 	'get_site_icon_url',
 	function( $url ) {
-		return empty( $url ) ? 'https://www.gravatar.com/avatar/' . md5( get_option( 'admin_email' ) ) . '?s=512' : $url;
+		return empty( $url ) ? dsca_get_gravatar_from_admin_email() : $url;
 	},
 	99,
 	1
 );
+
+add_filter(
+	'get_custom_logo',
+	function () {
+		$html = sprintf( '<a href="%1$s" class="custom-logo-link" rel="home" itemprop="url"><img src="%2$s" class="custom-logo" /></a>',
+			esc_url( home_url( '/' ) ),
+			esc_url( dsca_get_gravatar_from_admin_email() )
+		);
+		return $html;
+	},
+	999
+);
+
+
+function dsca_get_gravatar_from_admin_email() {
+	return 'https://www.gravatar.com/avatar/' . md5( get_option( 'admin_email' ) ) . '?s=512';
+}
