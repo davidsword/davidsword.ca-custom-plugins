@@ -14,8 +14,8 @@ add_action('init', 'dsca_mm');
 add_action('rest_api_init', 'dsca_mm');
 
 function dsca_mm() {
+	status_header( 503 );
 	if ( is_admin() )
 		return;
-
 	die('👋');
 }
