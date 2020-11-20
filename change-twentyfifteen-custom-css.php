@@ -31,12 +31,22 @@ add_action( 'wp_head', function() {
 		}
 
 		/* inline code */
-		code {
+		pre.wp-block-code, code {
 			background: #F7F7F7;
 			border: 1px solid #E4E4E4;
 			padding: 0 4px;
 			font-family: "Operator Mono", Courier, monospace;
 			font-weight: 300;
+		}
+
+		pre.wp-block-code {
+			padding: 15px;
+		}
+
+		pre code {
+			border: none;
+			background: transparent;
+			padding:0;
 		}
 
 		/* No author, tag, or format deets */
