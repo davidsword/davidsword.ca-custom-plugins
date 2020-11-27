@@ -17,6 +17,7 @@
 	 $colors = $_wp_admin_css_colors[$admin_color]->colors;
 	 ?>
 		<style>
+		    html body #toplevel_page_wpseo_dashboard > ul > li:nth-child(4), /* social */
 		    html body #toplevel_page_wpseo_dashboard > ul > li:nth-child(5), /* tools */
 			html body #toplevel_page_wpseo_dashboard > ul > li:nth-child(6), /* prem */
 			html body .yoast_premium_upsell,
