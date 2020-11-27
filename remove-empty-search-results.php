@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Remove Empty Search Results
+ * Plugin Name: DSCA - Remove Empty Search Results
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Remove Empty Search Results
  * Version: 0.0.1

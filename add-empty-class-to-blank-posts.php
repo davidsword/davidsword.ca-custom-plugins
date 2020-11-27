@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Add Empty Class to Blank Posts
+ * Plugin Name: DSCA - Add Empty Class to Blank Posts
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Add Empty Class to Blank Posts
  * Version: 0.0.1

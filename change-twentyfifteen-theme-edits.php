@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: davidsword.ca TwentyFifteen Theme Edits
+ * Plugin Name: DSCA - custom TwentyFifteen Theme Edits
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: davidsword.ca TwentyFifteen Theme Edits
  * Version: 0.0.1

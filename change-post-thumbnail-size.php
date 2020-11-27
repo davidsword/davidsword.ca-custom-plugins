@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Change Post Thumbnail Size to Full
+ * Plugin Name: DSCA - Change Post Thumbnail Size to Full
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Change Post Thumbnail Size to Full
  * Version: 0.0.1

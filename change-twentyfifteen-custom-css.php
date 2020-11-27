@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: davidsword.ca TwentyFifteen Custom CSS
+ * Plugin Name: DSCA - davidsword.ca TwentyFifteen Custom CSS
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: davidsword.ca TwentyFifteen Custom CSS
  * Version: 0.0.1

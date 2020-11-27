@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Change Tags to be Hierarchical & Private
+ * Plugin Name: DSCA - Change Tags to be Hierarchical & Private
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Convert Tags to be Hierarchical & Private
  * Version: 0.0.1

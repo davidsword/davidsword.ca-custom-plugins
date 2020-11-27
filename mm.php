@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: maintenance mode
+ * Plugin Name: DSCA - maintenance mode
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: disable site
  * Version: 0.0.1

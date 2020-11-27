@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Add Evn to Admin Bar
+ * Plugin Name: DSCA - Add Evn to Admin Bar
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Add Evn to Admin Bar
  * Version: 0.0.1

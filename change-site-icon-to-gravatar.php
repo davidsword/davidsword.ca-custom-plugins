@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Change Site Icon To Gravatar
+ * Plugin Name: DSCA - Change Site Icon To Gravatar
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Change Site Icon To Gravatar
  * Version: 0.0.1

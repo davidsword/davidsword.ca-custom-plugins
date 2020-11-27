@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Remove WP Emojis, use System instead
+ * Plugin Name: DSCA - Remove WP Emojis, use System instead
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Remove WP Emojis, use System instead
  * Version: 0.0.1

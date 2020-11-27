@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Add Google Analytics
+ * Plugin Name: DSCA - Add Google Analytics
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Add Google Analytics
  * Version: 0.0.1

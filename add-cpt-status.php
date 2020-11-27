@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Statuses Post Type
+ * Plugin Name: DSCA - Statuses Post Type
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Add Statuses Post Type
  * Version: 0.0.1

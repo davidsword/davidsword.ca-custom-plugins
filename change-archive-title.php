@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Change Archive Title
+ * Plugin Name: DSCA - Change Archive Title
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Change Archive Title
  * Version: 0.0.1

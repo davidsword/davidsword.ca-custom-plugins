@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Add Archived and WIP Flags to Posts based on Tags
+ * Plugin Name: DSCA - Add Archived and WIP Flags to Posts based on Tags
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Add Flags to Posts based on Tags
  * Version: 0.0.1

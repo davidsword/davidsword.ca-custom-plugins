@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Remove select categories from Home/blog
+ * Plugin Name: DSCA - Remove select categories from Home/blog
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Remove select categories from Home/blog
  * Version: 0.0.1

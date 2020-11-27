@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Disable SRCSET
+ * Plugin Name: DSCA - Disable SRCSET
  * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
  * Description: Disable SRCSET
  * Version: 0.0.1
