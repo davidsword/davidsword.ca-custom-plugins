@@ -18,7 +18,7 @@ add_action(
 			return;
 		?>
 		<div class="notice notice-info">
-			<p><?php echo 'Active JP Modules: ' . implode( ',', get_option( 'jetpack_active_modules' ) ); ?></p>
+			<p><?php echo 'Active JP Modules: ' . esc_html( implode( ',', get_option( 'jetpack_active_modules' ) ) ); ?></p>
 		</div>
 		<?php
 	}
