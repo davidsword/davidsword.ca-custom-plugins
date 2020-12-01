@@ -17,6 +17,15 @@ add_action( 'wp_head', function() {
 	?>
 	<!-- via davidsword/davidsword.ca-custom-plugins/change-twentyfifteen-custom-css.php -->
 	<style type='text/css'>
+		.entry-content .more-link {
+			background:#D5E4F9;
+			padding:0 3px;
+			border-radius:2px;
+		}
+		.entry-content .more-link:hover,
+		.entry-content .more-link:visited:hover {
+			background:#E1D2FA;
+		}
 		/* sidebar header logo */
 		.custom-logo {
 			max-height: 40px;
