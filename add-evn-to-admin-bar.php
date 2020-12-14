@@ -13,7 +13,7 @@
 add_action( 'wp_before_admin_bar_render', function () {
 	global $wp_admin_bar;
 
-	$evn   = strstr( get_home_url(), 'vvv.' ) ? 'local' : 'prod';
+	$evn   = strstr( get_home_url(), 'mystagingwebsite' ) ? 'local' : 'prod';
 	$color = 'prod' === $evn ? '#81e481' : 'orange';
 
 	$wp_admin_bar->add_node(
