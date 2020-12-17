@@ -41,5 +41,5 @@ add_filter(
 
 
 function dsca_get_gravatar_from_admin_email( $size = 512 ) {
-	return 'https://www.gravatar.com/avatar/' . md5( get_option( 'admin_email' ) ) . '?s=' . intval( $size*2 );
+	return 'https://www.gravatar.com/avatar/' . md5( get_option( 'admin_email' ) ) . '?s=' . intval( $size*2 ); // for retina!
 }
