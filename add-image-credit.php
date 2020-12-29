@@ -13,7 +13,7 @@
 add_filter( 'post_thumbnail_html', function( $html, $postid, $post_thumbnail_id, $size ) {
 	$attachment = wp_get_attachment_caption( $post_thumbnail_id );
 	$caption = '';
-	$correct_context = ! is_admin() && ! is_rss();
+	$correct_context = ! is_admin() && ! is_feed();
 	if ( $correct_context && $attachment && ! empty( $attachment ) ) {
 		$caption = sprintf(
 			'<div style="font-size: 0.6em;
