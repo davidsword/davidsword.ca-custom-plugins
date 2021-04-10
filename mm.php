@@ -23,6 +23,9 @@ add_action('wp', function(){
         header('X-Robots-Tag', 'noindex, nofollow, noarchive');
     }
 	
+	if ( get_the_ID() === 10288 ) //uses
+		return;
+	
     wp_redirect( get_option('home') , 302);
     die;
 });
