@@ -9,14 +9,24 @@
  * License: GNU GENERAL PUBLIC LICENSE
  */
 
-// add_action('init', 'dsca_mm');
-// add_action('rest_api_init', 'dsca_mm');
+add_action('wp', function(){
+    if( is_front_page() ) 
+		return;
+    
+	if(is_user_logged_in()) 
+		return;
+ 
+	if(is_login_page()) 
+		return;
+ 
+	if(!headers_sent()){
+        header('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    }
+	
+    wp_redirect( get_option('home') , 302);
+    die;
+});
 
-// function dsca_mm() {
-// 	$is_login = $GLOBALS['pagenow'] === 'wp-login.php';
-// 	if ( is_admin() || $is_login )
-// 		return;
-
-// 	status_header( 503 );
-// 	die('👋');
-// }
+function is_login_page() {
+    return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
+}
