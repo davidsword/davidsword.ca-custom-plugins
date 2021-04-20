@@ -23,7 +23,12 @@ add_action('wp', function(){
         header('X-Robots-Tag', 'noindex, nofollow, noarchive');
     }
 	
-	if ( get_the_ID() === 10288 ) //uses
+	$show_posts = [
+		10288, // uses
+		10707  // custom ir remote
+	];
+	
+	if ( in_array( get_the_ID(), $show_posts ) )
 		return;
 	
     wp_redirect( get_option('home') , 302);
