@@ -80,6 +80,12 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 }
 add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
 
+/**
+ * Set nessisary term and post format if not set
+ *
+ * @param WP_Post $post
+ * @return void
+ */
 function set_microblog_format_and_term( $post ) {
 	$has_aside_post_format = has_post_format( MB_POST_FORMAT, $post );
 	$has_micro_blog_term = has_term( MB_CAT_NAME, 'category', $post->ID );
