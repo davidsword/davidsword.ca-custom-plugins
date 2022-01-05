@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Plugin Name: DSCA - Change Site Icon To Gravatar
- * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Change Site Icon To Gravatar
- * Version: 0.0.1
- * Author: David Sword
- * Author URI: https://davidsword.ca/
- * License: GNU GENERAL PUBLIC LICENSE
- */
+// Change Site Icon To Gravatar
 
 /**
  * If no site_icon - use the gravatar instead.
@@ -41,5 +33,10 @@ add_filter(
 
 
 function dsca_get_gravatar_from_admin_email( $size = 512 ) {
+
+	// no need to stare at my ugly mug whilst developing.
+	if ( dsca_is_develop() )
+		return get_home_url().'/wp-content/local-icon.png';
+
 	return 'https://www.gravatar.com/avatar/' . md5( get_option( 'admin_email' ) ) . '?s=' . intval( $size*2 ); // for retina!
 }

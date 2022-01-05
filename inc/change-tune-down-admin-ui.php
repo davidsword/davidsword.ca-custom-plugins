@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Plugin Name: DSCA - Tune down admin ui noise
- * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: css edits to wp-admin
- * Version: 0.0.1
- * Author: David Sword
- * Author URI: https://davidsword.ca/
- * License: GNU GENERAL PUBLIC LICENSE
- */
+// Tune down admin ui noise
 
  add_action( 'admin_head', function() {
 	 //@todo check current page.

@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Plugin Name: DSCA - Add Google Analytics
- * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Add Google Analytics
- * Version: 0.0.1
- * Author: David Sword
- * Author URI: https://davidsword.ca/
- * License: GNU GENERAL PUBLIC LICENSE
- */
+// DSCA - Add Google Analytics
 
 add_action('wp_head', function(){
 	?>
