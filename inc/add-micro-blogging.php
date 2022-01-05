@@ -15,6 +15,7 @@
  */
 
 // @TODO weekly digest, though a third party plugin is probably better.
+// @TODO make prefix's consistant (dsca_ vs mb_)
 
 const MB_POST_SLUG_WORD_LENGTH = 3;
 const MB_CAT_NAME 				= 'micro-blog';
@@ -261,6 +262,6 @@ add_action(MB_CRONJOB_REMINDER, function(){
 		wp_mail(
 			get_option('admin_email'),
 			'Reminder: Micro Blog!',
-			"Haven't micro blogged today! Anything interesting happen? Any cool thoughts or pictures? Be a creator: ".esc_url( get_option('siteurl') )
+			"'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_option('siteurl') )
 		);
 });
