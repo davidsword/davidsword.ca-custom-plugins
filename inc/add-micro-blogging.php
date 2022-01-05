@@ -14,12 +14,15 @@
  * via the WordPress mobile app.
  */
 
+// @TODO weekly digest, though a third party plugin is probably better.
+
 const MB_POST_SLUG_WORD_LENGTH = 3;
 const MB_CAT_NAME 				= 'micro-blog';
 const MB_POST_FORMAT 			= 'aside';
 const MB_ONE_TIME_FIX_SLUG		= 'dsca_update_micro_blog_permalinks';
 const MB_AUTHOR_ID 				= 1;
-
+const MB_CRONJOB_REMINDER 		= 'dsca_micro_blog_cron_reminder';
+const MB_LAST_POST_OPTION		= 'micro_blog_last_post';
 /**
  * Register post format
  */
@@ -61,6 +64,8 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 	// a microblog post could have an explicit title IF the post_format andor term was set. this checks for that.
 	if ( ! dsca_is_microblog_post( $post->ID ) )
 		return;
+
+	update_option(MB_LAST_POST_OPTION, time() );
 
 	$new_slug = create_micro_blog_post_slug( $post );
 
@@ -239,3 +244,23 @@ function dsca_is_microblog_post( $id = false ) {
 
 	return false;
 }
+
+/**
+ * Set a cron job to remind to micro blog.
+ */
+add_action('wp', function() {
+	if ( ! wp_next_scheduled( MB_CRONJOB_REMINDER ) ) {
+		$tomorrow = date('h') > 20 ? ' tomorrow' : '';
+		$run_next = strtotime('8pm'.$tomorrow);
+		wp_schedule_event($run_next, 'daily', MB_CRONJOB_REMINDER);
+	}
+  });
+add_action(MB_CRONJOB_REMINDER, function(){
+	$last_posted = get_option(MB_LAST_POST_OPTION );
+	if ( $last_posted < strtotime( '12am today' ) )
+		wp_mail(
+			get_option('admin_email'),
+			'Reminder: Micro Blog!',
+			"Haven't micro blogged today! Anything interesting happen? Any cool thoughts or pictures? Be a creator: ".esc_url( get_option('siteurl') )
+		);
+});
