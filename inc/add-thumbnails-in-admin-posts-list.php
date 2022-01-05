@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Plugin Name: DSCA - Add Thumbnails in Admin Posts Table
- * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Add Thumbnails in Admin Posts Table
- * Version: 0.0.1
- * Author: David Sword
- * Author URI: https://davidsword.ca/
- * License: GNU GENERAL PUBLIC LICENSE
- */
+// Add Thumbnails in Admin Posts Table
 
 /**
  * Display the post thumbnail in the edit page table for eaiser management

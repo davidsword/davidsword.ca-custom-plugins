@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Plugin Name: DSCA - Portfolio Post Type
- * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Add Portfolio Post Type
- * Version: 0.0.1
- * Author: David Sword
- * Author URI: https://davidsword.ca/
- * License: GNU GENERAL PUBLIC LICENSE
- */
+// Portfolio Post Type
 
 add_action( 'init', function () {
 	$labels = array(

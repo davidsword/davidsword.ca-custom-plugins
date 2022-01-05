@@ -1,19 +1,11 @@
 <?php
 
-/**
- * Plugin Name: DSCA - Remove WP Emojis, use System instead
- * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Remove WP Emojis, use System instead
- * Version: 0.0.1
- * Author: David Sword
- * Author URI: https://davidsword.ca/
- * License: GNU GENERAL PUBLIC LICENSE
- */
+// Remove WP Emojis, use System instead
 
 /**
  * Remove WordPress emojicon, rely on users systems instead.
  *
- * It's 2019 & my audience is of the technical-up-to-date crowd.
+ * It's 2022 & my audience is of the technical-up-to-date crowd.
  */
 add_action(
 	'init',

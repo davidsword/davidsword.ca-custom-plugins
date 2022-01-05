@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Plugin Name: DSCA - Statuses Post Type
- * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: Add Statuses Post Type
- * Version: 0.0.1
- * Author: David Sword
- * Author URI: https://davidsword.ca/
- * License: GNU GENERAL PUBLIC LICENSE
- */
+// Statuses Post Type
 
 add_action( 'init', function () {
 	$labels = array(

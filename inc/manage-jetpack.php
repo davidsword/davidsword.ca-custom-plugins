@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Plugin Name: DSCA - Jetpack Module Manager
- * Plugin URI: https://github.com/davidsword/davidsword.ca-custom-plugins
- * Description: davidsword.ca TwentyFifteen Theme Edits
- * Version: 0.0.1
- * Author: David Sword
- * Author URI: https://davidsword.ca/
- * License: GNU GENERAL PUBLIC LICENSE
- */
+// Jetpack Module Manager
 
 // Quickly see active modules in Admin (as there's no wpcli on Pressable).
 add_action(
@@ -32,7 +24,15 @@ add_filter( 'option_jetpack_active_modules', function ( $modules ) {
 		'woocommerce-analytics', // unused.
 		'tiled-gallery',         // unused.
 		'json-api',              // not nessisary.
+		'monitor',
 	);
+
+	// locally images are from prod, w. photon the img requests dont hit localhost
+	// need to disable photon when deving locally
+	// @see https://css-tricks.com/develop-locally-use-images-production/
+	if ( dsca_is_develop() )
+		$disabled_modules[] = 'photon';
+
 	foreach ( $disabled_modules as $module_slug ) {
 		$found = array_search( $module_slug, $modules );
 		if ( false !== $found )
@@ -49,3 +49,7 @@ add_filter( 'jetpack_photon_pre_args', function ( $args ) {
 	$args['strip']   = 'all';
 	return $args;
 } );
+
+// shh notifications
+// @see https://github.com/Automattic/jetpack/blob/c46ee346c9cda88796a53a69240f2a1033967632/projects/packages/jitm/src/class-jitm.php#L86-L97
+add_filter( 'jetpack_just_in_time_msgs', '__return_false', 99 );
