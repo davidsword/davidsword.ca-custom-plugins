@@ -1,14 +1,34 @@
 <?php
+
 // maintenance mode
+return;
 
-// add_action('init', 'dsca_mm');
-// add_action('rest_api_init', 'dsca_mm');
+add_action('wp', function(){
+    if( is_front_page() )
+		return;
 
-// function dsca_mm() {
-// 	$is_login = $GLOBALS['pagenow'] === 'wp-login.php';
-// 	if ( is_admin() || $is_login )
-// 		return;
+	if(is_user_logged_in())
+		return;
 
-// 	status_header( 503 );
-// 	die('👋');
-// }
+	if(is_login_page())
+		return;
+
+	if(!headers_sent()){
+        header('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    }
+
+	$show_posts = [
+		10288, // uses
+		10707  // custom ir remote
+	];
+
+	if ( in_array( get_the_ID(), $show_posts ) )
+		return;
+
+    wp_redirect( get_option('home') , 302);
+    die;
+});
+
+function is_login_page() {
+    return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
+}
