@@ -22,6 +22,7 @@ const MB_POST_SLUG_WORD_LENGTH = 3;
 const MB_CAT_NAME 				= 'micro-blog';
 const MB_POST_FORMAT 			= 'aside';
 const MB_ONE_TIME_FIX_SLUG		= 'dsca_update_micro_blog_permalinks';
+const MB_AUTHOR_ID 				= 1;
 
 /**
  * Register post format
@@ -48,9 +49,16 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 		return;
 
 	$title_is_blank = empty( $post->post_title );
-	if ( $title_is_blank && ! has_post_format( MB_POST_FORMAT, $post ) ) {
-		set_post_format( $post->ID, MB_POST_FORMAT );
-		// @TODO maybe set category incase WP default cat isn't set to micro-blog
+
+	if ( $title_is_blank ) {
+
+		$has_aside_post_format = has_post_format( MB_POST_FORMAT, $post );
+		$has_micro_blog_term = has_term( MB_CAT_NAME, 'category', $post_ID );
+
+		if ( ! $has_aside_post_format )
+			set_post_format( $post->ID, MB_POST_FORMAT );
+		if ( ! $has_micro_blog_term )
+			wp_add_object_terms( $post_ID, MB_CAT_NAME, 'category' );
 	}
 
 	if ( ! dsca_is_microblog_post( $post->ID ) )
@@ -66,8 +74,10 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 	// update the post slug (WP handles unique post slug)
 	wp_update_post( array(
 		'ID' => $post_ID,
-		'post_name' => $new_slug
+		'post_name' => $new_slug,
+		'author' => MB_AUTHOR_ID
 	));
+
 	// re-hook this function
 	add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
 }
