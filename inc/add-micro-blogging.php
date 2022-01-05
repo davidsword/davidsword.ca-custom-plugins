@@ -52,14 +52,7 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 
 	// when title is blank it's implicitly a micro blog post, set format and cat incase it wasnt
 	if ( $title_is_blank ) {
-
-		$has_aside_post_format = has_post_format( MB_POST_FORMAT, $post );
-		$has_micro_blog_term = has_term( MB_CAT_NAME, 'category', $post_ID );
-
-		if ( ! $has_aside_post_format )
-			set_post_format( $post->ID, MB_POST_FORMAT );
-		if ( ! $has_micro_blog_term )
-			wp_add_object_terms( $post_ID, MB_CAT_NAME, 'category' );
+		set_microblog_format_and_term( $post );
 	}
 
 	// a microblog post could have an explicit title IF the post_format andor term was set. this checks for that.
@@ -87,6 +80,15 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 }
 add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
 
+function set_microblog_format_and_term( $post ) {
+	$has_aside_post_format = has_post_format( MB_POST_FORMAT, $post );
+	$has_micro_blog_term = has_term( MB_CAT_NAME, 'category', $post->ID );
+
+	if ( ! $has_aside_post_format )
+		set_post_format( $post->ID, MB_POST_FORMAT );
+	if ( ! $has_micro_blog_term )
+		wp_add_object_terms( $post->ID, MB_CAT_NAME, 'category' );
+}
 /**
  * Create micro blog post slug
  *
@@ -212,12 +214,12 @@ add_action( 'init', function(){
 	foreach ( $micro_blog_posts->posts as $mpost ) {
 		// update the post slug (WP handles unique post slug)
 		$new_slug = create_micro_blog_post_slug( $mpost );
-		if ( $post->post_name != $new_slug) {
+		if ( $mpost->post_name != $new_slug) {
 			wp_update_post( array(
 				'ID' => $mpost->ID,
 				'post_name' => $new_slug
 			));
-			// @TODO set aside, and micro-blog term to ensure all fixed and meet the criteria
+			set_microblog_format_and_term( $mpost );
 			// @TODO maybe null or at least look for the post_title not empty
 		}
 	}
