@@ -17,10 +17,12 @@
  */
 
  const MB_POST_SLUG_WORD_LENGTH = 3;
+ const MB_CAT_NAME 				= 'micro-blog';
+ const MB_POST_FORMAT 			= 'aside';
 
-// Register `aside`
+// Register post format
 add_action('after_setup_theme', function() {
-	add_theme_support( 'post-formats', [ 'aside' ] );
+	add_theme_support( 'post-formats', [ MB_POST_FORMAT ] );
 });
 
 // All new posts without a post title should implicitly be microblog Posts
@@ -30,7 +32,7 @@ add_filter( 'wp_insert_post_data', function($data, $postarr ) { // maybe change 
 	$title_is_blank = empty( $data['post_title'] );
 
 	if ( $title_is_blank )
-		set_post_format( $the_post_id, 'aside' );
+		set_post_format( $the_post_id, MB_POST_FORMAT );
 
 	// @TODO set category
 
@@ -96,7 +98,7 @@ add_filter( 'pre_get_post2s', function( $query ) {
 	$query_is_micro_blog = '';
 
 	if ( !$query_is_micro_blog ) {
-		// remove aside posts ()
+		// remove from posts ()
 	}
 });
 
@@ -133,7 +135,7 @@ add_filter( 'wp_get_object_terms', function( $terms, $object_ids, $taxonomies, $
 		return $terms;
 
 		foreach ( $terms as $k => $term )
-		if ( $term->slug === 'micro-blog' )
+		if ( $term->slug === MB_CAT_NAME )
 			unset($terms[$k]);
 
 	return $terms;
@@ -158,12 +160,12 @@ add_action( 'init', function(){
 			array(
 				'taxonomy' => 'category',
 				'field'    => 'slug',
-				'terms'    => array( 'micro-blog' ),
+				'terms'    => array( MB_CAT_NAME ),
 			),
 			array(
 				'taxonomy' => 'post_format',
 				'field'    => 'slug',
-				'terms'    => array( 'post-format-aside' ),
+				'terms'    => array( 'post-format-'.MB_POST_FORMAT ),
 			),
 		),
 	);
