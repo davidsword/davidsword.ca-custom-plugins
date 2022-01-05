@@ -14,10 +14,6 @@
  * via the WordPress mobile app.
  */
 
-// @TODO RSS modifications
-// @TODO change post author if from restricted accounts
-// @TODO cronjob check if micro blog post today, ifnot, email, 8pm
-
 const MB_POST_SLUG_WORD_LENGTH = 3;
 const MB_CAT_NAME 				= 'micro-blog';
 const MB_POST_FORMAT 			= 'aside';
@@ -50,6 +46,7 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 
 	$title_is_blank = empty( $post->post_title );
 
+	// when title is blank it's implicitly a micro blog post, set format and cat incase it wasnt
 	if ( $title_is_blank ) {
 
 		$has_aside_post_format = has_post_format( MB_POST_FORMAT, $post );
@@ -61,6 +58,7 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 			wp_add_object_terms( $post_ID, MB_CAT_NAME, 'category' );
 	}
 
+	// a microblog post could have an explicit title IF the post_format andor term was set. this checks for that.
 	if ( ! dsca_is_microblog_post( $post->ID ) )
 		return;
 
@@ -222,3 +220,22 @@ add_action( 'init', function(){
 	add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
 
 });
+
+/**
+ * Check if micro blog post or not.
+ *
+ * @param int $id of post
+ * @return bool
+ */
+function dsca_is_microblog_post( $id = false ) {
+	if ( ! $id )
+		$id = get_the_ID();
+
+	if ( has_post_format('aside', $id) )
+		return true;
+
+	if ( has_term('micro-blog', 'category', $id ) )
+		return true;
+
+	return false;
+}
