@@ -108,7 +108,7 @@ function truncate_words($text, $limit) {
 /**
  * Remove microblog posts from main category pages
  */
-add_filter( 'pre_get_post2s', function( $query ) {
+add_filter( 'pre_get_posts', function( $query ) {
 
 	if ( $query->is_main_query() ) {
 		// @TODO
