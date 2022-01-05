@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Tweak WordPress to be more Micro-Blogg'y (inspired by micro.blog)
  *
@@ -9,52 +8,136 @@
  * - post format of `aside`
  * - in category `micro-blog`
  *
- * The post format is for the theme, the category is for organization and query filtering.
- *
- * Anything else: images, tags, other cats, content length, blocked used, featured image, etc, are free game.
- *
- * Not using a custom post type as CPTs aren't supported via the WordPress mobile app.
+ * The post format is for the theme, the category is for organization/querying.
+ * Anything else: images, tags, other cats, content length, blocked used, featured
+ * image, etc, is free game. Not using a custom post type as CPTs aren't supported
+ * via the WordPress mobile app.
  */
 
-// Register `aside`
+// @TODO weekly digest, though a third party plugin is probably better.
+// @TODO make prefix's consistant (dsca_ vs mb_)
+
+const MB_POST_SLUG_WORD_LENGTH = 3;
+const MB_CAT_NAME 				= 'micro-blog';
+const MB_POST_FORMAT 			= 'aside';
+const MB_ONE_TIME_FIX_SLUG		= 'dsca_update_micro_blog_permalinks';
+const MB_AUTHOR_ID 				= 1;
+const MB_CRONJOB_REMINDER 		= 'dsca_micro_blog_cron_reminder';
+const MB_LAST_POST_OPTION		= 'micro_blog_last_post';
+/**
+ * Register post format
+ */
 add_action('after_setup_theme', function() {
-	add_theme_support( 'post-formats', [ 'aside' ] );
+	add_theme_support( 'post-formats', [ MB_POST_FORMAT ] );
 });
 
-// All new posts without a post title should implicitly be microblog Posts
-add_filter( 'wp_insert_post_data', function($data, $postarr ) { // maybe change to save_post
+/**
+ * Detect and modify Microblog posts on post save
+ *
+ * @param int $post_ID
+ * @param WP_Post $post
+ * @param bool Whether this is an existing post being updated
+ * @return void
+ */
+function dsca_microblog_save_post( $post_ID, $post, $update ) {
+	// allow 'publish', 'draft', 'future'
+	if ($post->post_type != 'post' || $post->post_status == 'auto-draft')
+		return;
 
-	$the_post_id    = $postarr['ID'];
-	$title_is_blank = empty( $data['post_title'] );
+	// only change slug when the post is created (both dates are equal)
+	if ($post->post_date_gmt != $post->post_modified_gmt)
+		return;
 
-	if ( $title_is_blank )
-		set_post_format( $the_post_id, 'aside' );
+	$title_is_blank = empty( $post->post_title );
 
-	// @TODO set category
+	// when title is blank it's implicitly a micro blog post, set format and cat incase it wasnt
+	if ( $title_is_blank ) {
 
-	// @TODO maybe modify slug
+		$has_aside_post_format = has_post_format( MB_POST_FORMAT, $post );
+		$has_micro_blog_term = has_term( MB_CAT_NAME, 'category', $post_ID );
 
-	return $data;
+		if ( ! $has_aside_post_format )
+			set_post_format( $post->ID, MB_POST_FORMAT );
+		if ( ! $has_micro_blog_term )
+			wp_add_object_terms( $post_ID, MB_CAT_NAME, 'category' );
+	}
 
-}, 11, 2 );
+	// a microblog post could have an explicit title IF the post_format andor term was set. this checks for that.
+	if ( ! dsca_is_microblog_post( $post->ID ) )
+		return;
 
-// Remove microblog posts from main category pages
-add_filter( 'pre_get_post2s', function( $query ) {
+	update_option(MB_LAST_POST_OPTION, time() );
+
+	$new_slug = create_micro_blog_post_slug( $post );
+
+	if ($new_slug == $post->post_name)
+		return; // already set
+
+	// unhook this function to prevent infinite looping
+	remove_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
+	// update the post slug (WP handles unique post slug)
+	wp_update_post( array(
+		'ID' => $post_ID,
+		'post_name' => $new_slug,
+		'author' => MB_AUTHOR_ID
+	));
+
+	// re-hook this function
+	add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
+}
+add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
+
+/**
+ * Create micro blog post slug
+ *
+ * Without a title, WP will use the post ID, and worse, the post ID may have a `-2`.
+ * Change to first x words of a micro post.
+ *
+ * @param WP_Post $post
+ * @return string new slug
+ */
+function create_micro_blog_post_slug( $post ) {
+	return sanitize_title( truncate_words( strip_tags( $post->post_content ), MB_POST_SLUG_WORD_LENGTH ) );
+
+}
+
+/**
+ * Truncate string into first x words
+ *
+ * Be sure to truncate words instead of characters as may accidentally spell things in permalinks.
+ *
+ * @param string $text string of words to cut from
+ * @param int $limit words to cut off at
+ * @return string
+ */
+function truncate_words($text, $limit) {
+	if (str_word_count($text, 0) > $limit) {
+		$words = str_word_count($text, 2);
+		$pos   = array_keys($words);
+		$text  = substr($text, 0, $pos[$limit]);
+	}
+	return $text;
+}
+
+/**
+ * Remove microblog posts from main category pages
+ */
+add_filter( 'pre_get_posts', function( $query ) {
 
 	if ( $query->is_main_query() ) {
-		//echo "<pre>";    var_dump($query); die;
+		// @TODO
 	}
 
 	$query_is_micro_blog = '';
 
 	if ( !$query_is_micro_blog ) {
-		// remove aside posts ()
+		//  @TODO remove from posts ()
 	}
 });
 
-// @TODO RSS modifications
-
-// in admin, add the title for managing
+/**
+ * Clean up wp-admin posts screen titles for cleaner managing (remove "(no title)")
+ */
 add_filter('the_title', function($title, $id){
 	if ( ! is_admin() )
 		return $title;
@@ -62,15 +145,17 @@ add_filter('the_title', function($title, $id){
 	if ( ! is_admin() && dsca_is_microblog_post( $id ) )
 		return false;
 
-	// @TODO && is edit screen
+	// @TODO check && is edit screen
 	if ( dsca_is_microblog_post( $id ) )
-		return '&nbsp;';//'microblog: ' . substr($title, 0, 25);
+		return get_post($id)->post_name; //@TODO maybe use slug here
 
 	return $title;
 }, 10, 2 );
 
-// everything about microbloging should be short, including the date:
-// opinionated override of wp's date format
+/**
+ * everything about microbloging should be short, including the date:
+ * opinionated override of wp's date format
+ */
 add_filter( 'get_the_date', function( $date, $format, $id ) {
 
 	if ( ! is_admin() && dsca_is_microblog_post( $id ) )
@@ -79,20 +164,104 @@ add_filter( 'get_the_date', function( $date, $format, $id ) {
 	return $date;
 }, 10, 3);
 
-// remove "micro-blog" tag from list of tags, this is more for organization than display
+/**
+ * remove "micro-blog" tag from list of tags, this is more for organization than display
+ */
 add_filter( 'wp_get_object_terms', function( $terms, $object_ids, $taxonomies, $args ) {
 	if ( is_admin() )
 		return $terms;
 
 		foreach ( $terms as $k => $term )
-		if ( $term->slug === 'micro-blog' )
+		if ( $term->slug === MB_CAT_NAME )
 			unset($terms[$k]);
 
 	return $terms;
 }, 10, 4 );
 
-// @TODO change post author if from restricted accounts
+/**
+ * Update permalinks
+ * Would do cli, but Pressable doesnt allow wpcli cmds
+ * need to trigger one time actions via querystring
+ */
+add_action( 'init', function(){
+	if ( ! is_admin() || ! current_user_can('manage_options') || ! isset( $_GET[MB_ONE_TIME_FIX_SLUG] ))
+		return;
 
-// @TODO cronjob check if micro blog post today, ifnot, email, 8pm
+	$args = array(
+		'post_type' => 'post',
+		'tax_query' => array(
+			'relation' => 'OR',
+			array(
+				'taxonomy' => 'category',
+				'field'    => 'slug',
+				'terms'    => array( MB_CAT_NAME ),
+			),
+			array(
+				'taxonomy' => 'post_format',
+				'field'    => 'slug',
+				'terms'    => array( 'post-format-'.MB_POST_FORMAT ),
+			),
+		),
+		'posts_per_page' => '-1',
+	);
+	$micro_blog_posts = new WP_Query( $args );
 
-//@TODO permalinks for microblog posts should be `/yyyy/mm/dd/first-few-words/`, the alt "/first-few-words/" is just weird
+	// unhook this function to prevent infinite looping
+	remove_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
+
+	foreach ( $micro_blog_posts->posts as $mpost ) {
+		// update the post slug (WP handles unique post slug)
+		$new_slug = create_micro_blog_post_slug( $mpost );
+		if ( $post->post_name != $new_slug) {
+			wp_update_post( array(
+				'ID' => $mpost->ID,
+				'post_name' => $new_slug
+			));
+			// @TODO set aside, and micro-blog term to ensure all fixed and meet the criteria
+			// @TODO maybe null or at least look for the post_title not empty
+		}
+	}
+
+	// re-hook this function
+	add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
+
+});
+
+/**
+ * Check if micro blog post or not.
+ *
+ * @param int $id of post
+ * @return bool
+ */
+function dsca_is_microblog_post( $id = false ) {
+	if ( ! $id )
+		$id = get_the_ID();
+
+	if ( has_post_format('aside', $id) )
+		return true;
+
+	if ( has_term('micro-blog', 'category', $id ) )
+		return true;
+
+	return false;
+}
+
+/**
+ * Set a cron job to remind to micro blog.
+ */
+add_action('wp', function() {
+	if ( ! wp_next_scheduled( MB_CRONJOB_REMINDER ) ) {
+		$tomorrow = date('h') > 20 ? ' tomorrow' : '';
+		$run_next = strtotime('8pm'.$tomorrow);
+		wp_schedule_event($run_next, 'daily', MB_CRONJOB_REMINDER);
+	}
+  });
+add_action(MB_CRONJOB_REMINDER, function(){
+	$last_posted = get_option(MB_LAST_POST_OPTION );
+	if ( $last_posted < strtotime( '12am today' ) )
+		wp_mail(
+			get_option('admin_email'),
+			'Reminder: Micro Blog!',
+			"'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_option('siteurl') )
+		);
+});
