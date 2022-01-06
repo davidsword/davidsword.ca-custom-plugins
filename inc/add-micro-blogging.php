@@ -176,7 +176,8 @@ add_filter( 'get_the_date', function( $date, $format, $id ) {
  * remove "micro-blog" tag from list of tags, this is more for organization than display
  */
 add_filter( 'wp_get_object_terms', function( $terms, $object_ids, $taxonomies, $args ) {
-	if ( is_admin() )
+	$is_rest = defined('REST_REQUEST') && REST_REQUEST;
+	if ( is_admin() || $is_rest )
 		return $terms;
 
 		foreach ( $terms as $k => $term )
