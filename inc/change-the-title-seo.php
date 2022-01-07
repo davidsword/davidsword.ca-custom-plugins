@@ -4,7 +4,7 @@
  * Change the title for usability and SEO
  *
  * High level, should be simple:
- * `{current screen} | {site name}`
+ *   `{optional context}: {current object(s)} | {site name}`
  * with a few exceptions.
  */
 add_filter( 'wp_title', function ( $title, $sep ) {
@@ -18,7 +18,6 @@ add_filter( 'wp_title', function ( $title, $sep ) {
 	if ( is_feed() )
 		return $name;
 
-	// Home/front
 	if ( $description && ( is_home() || is_front_page() ) ) {
 		if ( ( $paged >= 2 || $page >= 2 ) && ! is_404() ) {
 			$num = max( $paged, $page );
@@ -46,6 +45,7 @@ add_filter( 'wp_title', function ( $title, $sep ) {
 
 	// media, date, author, etc blocked
 
+	// fallthrough for whatever was missed
 	return $title;
 
 }, 10, 2 );
