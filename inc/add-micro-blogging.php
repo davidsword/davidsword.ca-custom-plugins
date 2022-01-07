@@ -104,26 +104,7 @@ function set_microblog_format_and_term( $post ) {
  * @return string new slug
  */
 function create_micro_blog_post_slug( $post ) {
-	return sanitize_title( truncate_words( strip_tags( $post->post_content ), MB_POST_SLUG_WORD_LENGTH ) );
-
-}
-
-/**
- * Truncate string into first x words
- *
- * Be sure to truncate words instead of characters as may accidentally spell things in permalinks.
- *
- * @param string $text string of words to cut from
- * @param int $limit words to cut off at
- * @return string
- */
-function truncate_words($text, $limit) {
-	if (str_word_count($text, 0) > $limit) {
-		$words = str_word_count($text, 2);
-		$pos   = array_keys($words);
-		$text  = substr($text, 0, $pos[$limit]);
-	}
-	return $text;
+	return sanitize_title( wp_trim_words( strip_tags( $post->post_content ), MB_POST_SLUG_WORD_LENGTH, '' ) );
 }
 
 /**
