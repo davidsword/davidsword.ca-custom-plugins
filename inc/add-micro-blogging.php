@@ -7,6 +7,7 @@
  * - no post title
  * - post format of `aside`
  * - in category `micro-blog`
+ * - no excerpts in feeds, must be full post
  *
  * The post format is for the theme, the category is for organization/querying.
  * Anything else: images, tags, other cats, content length, blocked used, featured
@@ -251,3 +252,5 @@ add_action(MB_CRONJOB_REMINDER, function(){
 			"'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_option('siteurl') )
 		);
 });
+
+// @TODO hard code "no excerpts in feeds, must be full post" to override options and theme settings
