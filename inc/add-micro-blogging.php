@@ -160,8 +160,8 @@ add_filter( 'wp_get_object_terms', function( $terms, $object_ids, $taxonomies, $
 	if ( is_admin() || $is_rest )
 		return $terms;
 
-		foreach ( $terms as $k => $term )
-		if ( $term->slug === MB_CAT_NAME )
+	foreach ( $terms as $k => $term )
+		if ( isset( $term->slug ) && $term->slug === MB_CAT_NAME )
 			unset($terms[$k]);
 
 	return $terms;
