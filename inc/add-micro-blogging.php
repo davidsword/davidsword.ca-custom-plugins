@@ -249,7 +249,7 @@ add_action(MB_CRONJOB_REMINDER, function(){
 		wp_mail(
 			get_option('admin_email'),
 			'Reminder: Micro Blog!',
-			"'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_option('siteurl') )
+			"'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_admin_url() )
 		);
 });
 
