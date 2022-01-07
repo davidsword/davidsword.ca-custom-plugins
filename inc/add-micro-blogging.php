@@ -14,16 +14,14 @@
  * via the WordPress mobile app.
  */
 
-// @TODO weekly digest, though a third party plugin is probably better.
-// @TODO make prefix's consistant (dsca_ vs mb_)
-
-const MB_POST_SLUG_WORD_LENGTH = 3;
+const MB_POST_SLUG_WORD_LENGTH  = 3;
 const MB_CAT_NAME 				= 'micro-blog';
 const MB_POST_FORMAT 			= 'aside';
-const MB_ONE_TIME_FIX_SLUG		= 'dsca_update_micro_blog_permalinks';
+const MB_ONE_TIME_FIX_SLUG		= 'micro_blog_fix_posts';
 const MB_AUTHOR_ID 				= 1;
-const MB_CRONJOB_REMINDER 		= 'dsca_micro_blog_cron_reminder';
-const MB_LAST_POST_OPTION		= 'micro_blog_last_post';
+const MB_CRONJOB_REMINDER 		= 'micro_blog_cron_reminder';
+const MB_LAST_POST_OPTION		= 'micro_blog_last_post_time';
+
 /**
  * Register post format
  */
@@ -44,7 +42,7 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 	if ($post->post_type != 'post' || $post->post_status == 'auto-draft')
 		return;
 
-	// only change slug when the post is created (both dates are equal)
+	// only change slug when the post is created
 	if ($post->post_date_gmt != $post->post_modified_gmt)
 		return;
 
@@ -59,24 +57,24 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 	if ( ! dsca_is_microblog_post( $post->ID ) )
 		return;
 
-	update_option(MB_LAST_POST_OPTION, time() );
-
 	$new_slug = create_micro_blog_post_slug( $post );
 
 	if ($new_slug == $post->post_name)
-		return; // already set
+		return;
 
-	// unhook this function to prevent infinite looping
+	// prevent infinite looping
 	remove_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
-	// update the post slug (WP handles unique post slug)
+
 	wp_update_post( array(
 		'ID' => $post_ID,
 		'post_name' => $new_slug,
 		'author' => MB_AUTHOR_ID
 	));
 
-	// re-hook this function
 	add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
+
+	// stash time for reminder cron to check agaisnt
+	update_option(MB_LAST_POST_OPTION, time() );
 }
 add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
 
@@ -128,34 +126,15 @@ function truncate_words($text, $limit) {
 }
 
 /**
- * Remove microblog posts from main category pages
- */
-add_filter( 'pre_get_posts', function( $query ) {
-
-	if ( $query->is_main_query() ) {
-		// @TODO
-	}
-
-	$query_is_micro_blog = '';
-
-	if ( !$query_is_micro_blog ) {
-		//  @TODO remove from posts ()
-	}
-});
-
-/**
  * Clean up wp-admin posts screen titles for cleaner managing (remove "(no title)")
  */
 add_filter('the_title', function($title, $id){
 	if ( ! is_admin() )
 		return $title;
 
-	if ( ! is_admin() && dsca_is_microblog_post( $id ) )
-		return false;
-
-	// @TODO check && is edit screen
+	// @TODO check `&& is edit screen` https://developer.wordpress.org/reference/functions/get_current_screen/
 	if ( dsca_is_microblog_post( $id ) )
-		return get_post($id)->post_name; //@TODO maybe use slug here
+		return get_post($id)->post_name;
 
 	return $title;
 }, 10, 2 );
@@ -188,9 +167,9 @@ add_filter( 'wp_get_object_terms', function( $terms, $object_ids, $taxonomies, $
 }, 10, 4 );
 
 /**
- * Update permalinks
- * Would do cli, but Pressable doesnt allow wpcli cmds
- * need to trigger one time actions via querystring
+ * One time repair of micro blog posts
+ *
+ * Would do cli, but Pressable doesnt allow wpcli cmds so need to trigger actions via querystring :upsidedownsmile:
  */
 add_action( 'init', function(){
 	if ( ! is_admin() || ! current_user_can('manage_options') || ! isset( $_GET[MB_ONE_TIME_FIX_SLUG] ))
@@ -215,11 +194,10 @@ add_action( 'init', function(){
 	);
 	$micro_blog_posts = new WP_Query( $args );
 
-	// unhook this function to prevent infinite looping
+	// prevent infinite looping
 	remove_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
 
 	foreach ( $micro_blog_posts->posts as $mpost ) {
-		// update the post slug (WP handles unique post slug)
 		$new_slug = create_micro_blog_post_slug( $mpost );
 		if ( $mpost->post_name != $new_slug) {
 			wp_update_post( array(
@@ -233,7 +211,6 @@ add_action( 'init', function(){
 
 	// re-hook this function
 	add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
-
 });
 
 /**
@@ -264,7 +241,7 @@ add_action('wp', function() {
 		$run_next = strtotime('8pm'.$tomorrow);
 		wp_schedule_event($run_next, 'daily', MB_CRONJOB_REMINDER);
 	}
-  });
+});
 add_action(MB_CRONJOB_REMINDER, function(){
 	$last_posted = get_option(MB_LAST_POST_OPTION );
 	if ( $last_posted < strtotime( '12am today' ) )
