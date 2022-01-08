@@ -128,8 +128,9 @@ add_filter('the_title', function($title, $id){
  */
 add_filter( 'get_the_date', function( $date, $format, $id ) {
 
-	if ( ! is_admin() && dsca_is_microblog_post( $id ) )
-		return date('M n');
+	// @TODO fix
+	// if ( ! is_admin() && dsca_is_microblog_post( $id ) )
+	// 	return get_the_date('M n', $id);
 
 	return $date;
 }, 10, 3);
