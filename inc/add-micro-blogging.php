@@ -7,6 +7,7 @@
  * - no post title
  * - post format of `aside`
  * - in category `micro-blog`
+ * - no excerpts in feeds, must be full post
  *
  * The post format is for the theme, the category is for organization/querying.
  * Anything else: images, tags, other cats, content length, blocked used, featured
@@ -20,6 +21,7 @@ const MB_POST_FORMAT 			= 'aside';
 const MB_ONE_TIME_FIX_SLUG		= 'micro_blog_fix_posts';
 const MB_AUTHOR_ID 				= 1;
 const MB_CRONJOB_REMINDER 		= 'micro_blog_cron_reminder';
+const MB_CRONJOB_REMINDER_HOUR  = 20; // localtime `get_option('timezone_string')`, no UTC math or DLS
 const MB_LAST_POST_OPTION		= 'micro_blog_last_post_time';
 
 /**
@@ -103,26 +105,7 @@ function set_microblog_format_and_term( $post ) {
  * @return string new slug
  */
 function create_micro_blog_post_slug( $post ) {
-	return sanitize_title( truncate_words( strip_tags( $post->post_content ), MB_POST_SLUG_WORD_LENGTH ) );
-
-}
-
-/**
- * Truncate string into first x words
- *
- * Be sure to truncate words instead of characters as may accidentally spell things in permalinks.
- *
- * @param string $text string of words to cut from
- * @param int $limit words to cut off at
- * @return string
- */
-function truncate_words($text, $limit) {
-	if (str_word_count($text, 0) > $limit) {
-		$words = str_word_count($text, 2);
-		$pos   = array_keys($words);
-		$text  = substr($text, 0, $pos[$limit]);
-	}
-	return $text;
+	return sanitize_title( wp_trim_words( strip_tags( $post->post_content ), MB_POST_SLUG_WORD_LENGTH, '' ) );
 }
 
 /**
@@ -159,8 +142,8 @@ add_filter( 'wp_get_object_terms', function( $terms, $object_ids, $taxonomies, $
 	if ( is_admin() || $is_rest )
 		return $terms;
 
-		foreach ( $terms as $k => $term )
-		if ( $term->slug === MB_CAT_NAME )
+	foreach ( $terms as $k => $term )
+		if ( isset( $term->slug ) && $term->slug === MB_CAT_NAME )
 			unset($terms[$k]);
 
 	return $terms;
@@ -236,18 +219,49 @@ function dsca_is_microblog_post( $id = false ) {
  * Set a cron job to remind to micro blog.
  */
 add_action('wp', function() {
+
+	$tz       = get_option('timezone_string');
+	$now 	  = new DateTime("now", new DateTimeZone($tz) );
+
 	if ( ! wp_next_scheduled( MB_CRONJOB_REMINDER ) ) {
-		$tomorrow = date('h') > 20 ? ' tomorrow' : '';
-		$run_next = strtotime('8pm'.$tomorrow);
+		$tomorrow = $now->format('H') > MB_CRONJOB_REMINDER_HOUR ? 'tomorrow ' : '';
+		$run_next = strtotime("{$tomorrow} 8pm {$tz}");
 		wp_schedule_event($run_next, 'daily', MB_CRONJOB_REMINDER);
 	}
 });
 add_action(MB_CRONJOB_REMINDER, function(){
 	$last_posted = get_option(MB_LAST_POST_OPTION );
-	if ( $last_posted < strtotime( '12am today' ) )
-		wp_mail(
-			get_option('admin_email'),
-			'Reminder: Micro Blog!',
-			"'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_option('siteurl') )
-		);
+	if ( $last_posted < strtotime( '12am today' ) ) {
+		$message = "'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_admin_url() );
+	} else {
+		// just putting this here temp to ensure the email sends at the correct time. timezone headaches.
+		$message = "great work blogging today!";
+	}
+	wp_mail(
+		get_option('admin_email'),
+		'Reminder: Micro Blog!',
+		$message
+	);
 });
+
+/**
+ * Change Permalinks for single micro blog post pages.
+ *
+ * Default is whatever (personally I've always used /%post_name%/)
+ * Single mb post should be `/yyyy/mm/dd/%slug%/`
+ */
+add_action( 'init',  function() {
+	if ( is_user_logged_in() && current_user_can('manage_options') && isset($_GET['flush_rewrites']))
+		flush_rewrite_rules( true );
+
+	if ( '/%year%/%monthnum%/%day%/%postname%/' !== get_option('permalink_structure') )
+		add_rewrite_rule( '([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([a-z0-9-]+)[/]?$', 'index.php?name=$matches[4]', 'top' );
+} );
+
+add_filter( 'post_link', function( $url, $post, $leavename ) {
+	if ( dsca_is_microblog_post( $post->ID ) ) {
+		$date = strtotime( date( $post->post_date ) );
+		$url= trailingslashit( home_url(date('/Y/m/d/', $date).$post->post_name.'/') );
+	}
+	return $url;
+}, 10, 3 );

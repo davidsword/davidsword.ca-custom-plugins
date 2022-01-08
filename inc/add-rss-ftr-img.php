@@ -4,5 +4,9 @@
 
 add_filter('the_content_feed', function( $content ) {
 	$ftrimg = get_the_post_thumbnail();
-	return $ftrimg . $content;
+
+	if ( ! has_post_format( 'aside', get_the_ID() ) )
+		return $ftrimg . $content;
+	else
+		return $content . $ftrimg;
 });
