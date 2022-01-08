@@ -244,4 +244,24 @@ add_action(MB_CRONJOB_REMINDER, function(){
 	);
 });
 
-// @TODO hard code "no excerpts in feeds, must be full post" to override options and theme settings
+/**
+ * Change Permalinks for single micro blog post pages.
+ *
+ * Default is whatever (personally I've always used /%post_name%/)
+ * Single mb post should be `/yyyy/mm/dd/%slug%/`
+ */
+add_action( 'init',  function() {
+	if ( is_user_logged_in() && current_user_can('manage_options') && isset($_GET['flush_rewrites']))
+		flush_rewrite_rules( true );
+
+	if ( '/%year%/%monthnum%/%day%/%postname%/' !== get_option('permalink_structure') )
+		add_rewrite_rule( '([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/([a-z0-9-]+)[/]?$', 'index.php?name=$matches[4]', 'top' );
+} );
+
+add_filter( 'post_link', function( $url, $post, $leavename ) {
+	if ( dsca_is_microblog_post( $post->ID ) ) {
+		$date = strtotime( date( $post->post_date ) );
+		$url= trailingslashit( home_url(date('/Y/m/d/', $date).$post->post_name.'/') );
+	}
+	return $url;
+}, 10, 3 );
