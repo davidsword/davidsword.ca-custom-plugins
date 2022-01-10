@@ -6,7 +6,7 @@
 add_action(
 	'admin_notices',
 	function () {
-		if ( ! isset( $_GET['jp_show_active_modules'] ) )
+		if ( ! ( isset( $_GET['jp_show_active_modules'] ) && current_user_can('manage_options') ) )
 			return;
 		?>
 		<div class="notice notice-info">
@@ -20,11 +20,11 @@ add_action(
 add_filter( 'option_jetpack_active_modules', function ( $modules ) {
 	// @TODO make this a dynamic option.
 	$disabled_modules = array(
-		'stats',                 // using Google Analytics.
+		'stats',                 // not nessisary.
 		'woocommerce-analytics', // unused.
 		'tiled-gallery',         // unused.
 		'json-api',              // not nessisary.
-		'monitor',
+		'monitor',				 // not nessisary.
 	);
 
 	// locally images are from prod, w. photon the img requests dont hit localhost
