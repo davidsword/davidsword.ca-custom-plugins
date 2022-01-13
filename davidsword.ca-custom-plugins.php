@@ -17,5 +17,5 @@ require('helpers.php');
 $filenames = glob(__DIR__.'/inc/*.php');
 foreach ($filenames as $filename)
 	if ( 'index.php' !== $filename )
-		// phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.NotAbsolutePath -- shh
+		// phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.NotAbsolutePath, WordPressVIPMinimum.Files.IncludingFile.UsingVariable -- shh
 		require( $filename );
