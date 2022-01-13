@@ -6,6 +6,7 @@
 add_action(
 	'admin_notices',
 	function () {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- not a form
 		if ( ! ( isset( $_GET['jp_show_active_modules'] ) && current_user_can('manage_options') ) )
 			return;
 		?>

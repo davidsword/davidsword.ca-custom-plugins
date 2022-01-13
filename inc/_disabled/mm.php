@@ -22,7 +22,7 @@ add_action('wp', function(){
 		10707  // custom ir remote
 	];
 
-	if ( in_array( get_the_ID(), $show_posts ) )
+	if ( in_array( get_the_ID(), $show_posts, true ) )
 		return;
 
     wp_redirect( get_option('home') , 302);
@@ -30,5 +30,5 @@ add_action('wp', function(){
 });
 
 function is_login_page() {
-    return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
+    return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'), true);
 }

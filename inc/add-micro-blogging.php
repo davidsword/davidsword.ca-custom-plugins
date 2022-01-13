@@ -40,12 +40,12 @@ add_action('after_setup_theme', function() {
  * @return void
  */
 function dsca_microblog_save_post( $post_ID, $post, $update ) {
-	// allow 'publish', 'draft', 'future'
-	if ($post->post_type != 'post' || $post->post_status == 'auto-draft')
+	// allow publish, draft, future
+	if ($post->post_type !== 'post' || $post->post_status === 'auto-draft')
 		return;
 
 	// only change slug when the post is created
-	if ($post->post_date_gmt != $post->post_modified_gmt)
+	if ($post->post_date_gmt !== $post->post_modified_gmt)
 		return;
 
 	$title_is_blank = empty( $post->post_title );
@@ -61,7 +61,7 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 
 	$new_slug = create_micro_blog_post_slug( $post );
 
-	if ($new_slug == $post->post_name)
+	if ($new_slug === $post->post_name)
 		return;
 
 	// prevent infinite looping
@@ -105,7 +105,7 @@ function set_microblog_format_and_term( $post ) {
  * @return string new slug
  */
 function create_micro_blog_post_slug( $post ) {
-	return sanitize_title( wp_trim_words( strip_tags( $post->post_content ), MB_POST_SLUG_WORD_LENGTH, '' ) );
+	return sanitize_title( wp_trim_words( wp_strip_all_tags( $post->post_content ), MB_POST_SLUG_WORD_LENGTH, '' ) );
 }
 
 /**
