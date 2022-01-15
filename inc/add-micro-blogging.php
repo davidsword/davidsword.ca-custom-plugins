@@ -40,12 +40,8 @@ add_action('after_setup_theme', function() {
  * @return void
  */
 function dsca_microblog_save_post( $post_ID, $post, $update ) {
-	// allow publish, draft, future
-	if ($post->post_type !== 'post' || $post->post_status === 'auto-draft')
-		return;
 
-	// only change slug when the post is created
-	if ($post->post_date_gmt !== $post->post_modified_gmt)
+	if ($post->post_type !== 'post' || $post->post_status === 'auto-draft')
 		return;
 
 	$title_is_blank = empty( $post->post_title );
@@ -61,6 +57,7 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 
 	$new_slug = create_micro_blog_post_slug( $post );
 
+	// we're all good here.
 	if ($new_slug === $post->post_name)
 		return;
 
