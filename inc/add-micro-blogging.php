@@ -73,6 +73,7 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 	add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
 
 	// stash time for reminder cron to check agaisnt
+	// @TODO this needs to be in post_status_transition, not save_post
 	update_option(MB_LAST_POST_OPTION, time() );
 }
 add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
