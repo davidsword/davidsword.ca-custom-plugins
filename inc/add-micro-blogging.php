@@ -109,7 +109,15 @@ function set_microblog_format_and_term( $post ) {
  * @return string new slug
  */
 function create_micro_blog_post_slug( $post ) {
-	return sanitize_title( wp_trim_words( wp_strip_all_tags( $post->post_content ), MB_POST_SLUG_WORD_LENGTH, '' ) );
+
+	$slug = sanitize_title( wp_trim_words( wp_strip_all_tags( $post->post_content ), MB_POST_SLUG_WORD_LENGTH, '' ) );
+
+	// there's a change a URL was one of the three "words".
+	if ( strstr( $slug, 'https-' ) )
+		// converts a link-slug like `5-9-https-twitter-com-wordpress-status-1486081411157315592` to `5-9-twitter`
+		$slug = implode( '-', array_slice( explode( '-', str_replace( 'https-', '', $slug ) ),0,MB_POST_SLUG_WORD_LENGTH) );
+
+	return $slug;
 }
 
 /**
