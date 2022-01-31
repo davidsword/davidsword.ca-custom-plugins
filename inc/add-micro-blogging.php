@@ -9,9 +9,12 @@
  * - in category `micro-blog`
  * - no excerpts in feeds, must be full post
  *
- * The post format is for the theme, the category is for organization/querying.
- * Anything else: images, tags, other cats, content length, blocked used, featured
- * image, etc, is free game. Not using a custom post type as CPTs aren't supported
+ * No post title is an implicit indication it's a micro blog post
+ * Post format aside is an explicit indication
+ * The category is for organization/querying, as is set auto when confirmed is micro blog post
+ *
+ * Anything else: featured images, tags, other cats, content length, blocks used,
+ * etc, is free game. Not using a custom post type as CPTs aren't supported
  * via the WordPress mobile app.
  */
 
@@ -40,6 +43,8 @@ add_action('after_setup_theme', function() {
  * @return void
  */
 function dsca_microblog_save_post( $post_ID, $post, $update ) {
+
+	// @TODO for some reason Scheduled posts dont flow through here
 
 	if ($post->post_type !== 'post' || $post->post_status === 'auto-draft')
 		return;
@@ -71,12 +76,9 @@ function dsca_microblog_save_post( $post_ID, $post, $update ) {
 	));
 
 	add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
-
-	// stash time for reminder cron to check agaisnt
-	// @TODO this needs to be in post_status_transition, not save_post
-	update_option(MB_LAST_POST_OPTION, time() );
 }
 add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
+add_action( 'future_post', 'dsca_microblog_save_post', 10, 3 ); // scheduled posts
 
 /**
  * Set nessisary term and post format if not set
@@ -92,6 +94,10 @@ function set_microblog_format_and_term( $post ) {
 		set_post_format( $post->ID, MB_POST_FORMAT );
 	if ( ! $has_micro_blog_term )
 		wp_add_object_terms( $post->ID, MB_CAT_NAME, 'category' );
+
+	// remove default category
+	$default_category_id = get_option('default_category');
+	wp_remove_object_terms( $post->ID, intval( $default_category_id ), 'category' );
 }
 /**
  * Create micro blog post slug
@@ -113,9 +119,9 @@ add_filter('the_title', function($title, $id){
 	if ( ! is_admin() )
 		return $title;
 
-	// @TODO check `&& is edit screen` https://developer.wordpress.org/reference/functions/get_current_screen/
-	if ( dsca_is_microblog_post( $id ) )
-		return get_post($id)->post_name;
+	$is_edit_screen = get_current_screen()->base === 'edit';
+	if ( $is_edit_screen && dsca_is_microblog_post( $id ) )
+		return '/'.get_post($id)->post_name.'/';
 
 	return $title;
 }, 10, 2 );
@@ -195,6 +201,19 @@ add_action( 'init', function(){
 	add_action( 'save_post', 'dsca_microblog_save_post', 10, 3 );
 });
 
+
+add_action( 'transition_post_status', function ( $new_status, $old_status, $post ) {
+	if ( 'publish' !== $new_status || 'publish' !== $old_status )
+		return;
+
+	if ( ! dsca_is_microblog_post( $post->ID ) )
+		return;
+
+	// stash time for reminder cron to check agaisnt
+	update_option(MB_LAST_POST_OPTION, time() );
+
+}, 10, 3 );
+
 /**
  * Check if micro blog post or not.
  *
@@ -208,8 +227,10 @@ function dsca_is_microblog_post( $id = false ) {
 	if ( has_post_format('aside', $id) )
 		return true;
 
-	if ( has_term('micro-blog', 'category', $id ) )
+	if ( empty( get_post( $id )->post_title ) )
 		return true;
+
+	// not checking for micro-blog term. if default cat is micro-blog, this will accidentally fire on normal drafts.
 
 	return false;
 }
@@ -230,13 +251,11 @@ add_action('wp', function() {
 });
 add_action(MB_CRONJOB_REMINDER, function(){
 	$last_posted = get_option(MB_LAST_POST_OPTION );
-	if ( $last_posted < strtotime( '12am today' ) ) {
-		$message = "'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_admin_url() );
-	} else {
-		// just putting this here temp to ensure the email sends at the correct time. timezone headaches.
-		$message = "great work blogging today!";
-	}
-	wp_mail(
+	if ( $last_posted > strtotime( '-24 hours' ) )
+		return; // awesome.
+
+	$message = "'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_admin_url() );
+	wp_mail( // phpcs:ignore
 		get_option('admin_email'),
 		'Reminder: Micro Blog!',
 		$message
