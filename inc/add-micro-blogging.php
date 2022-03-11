@@ -23,9 +23,6 @@ const MB_CAT_NAME 				= 'micro-blog';
 const MB_POST_FORMAT 			= 'aside';
 const MB_ONE_TIME_FIX_SLUG		= 'micro_blog_fix_posts';
 const MB_AUTHOR_ID 				= 1;
-const MB_CRONJOB_REMINDER 		= 'micro_blog_cron_reminder';
-const MB_CRONJOB_REMINDER_HOUR  = 20; // localtime `get_option('timezone_string')`, no UTC math or DLS
-const MB_LAST_POST_OPTION		= 'micro_blog_last_post_time';
 
 /**
  * Register post format
@@ -217,9 +214,6 @@ add_action( 'transition_post_status', function ( $new_status, $old_status, $post
 	if ( ! dsca_is_microblog_post( $post->ID ) )
 		return;
 
-	// stash time for reminder cron to check agaisnt
-	update_option(MB_LAST_POST_OPTION, time() );
-
 }, 10, 3 );
 
 /**
@@ -242,33 +236,6 @@ function dsca_is_microblog_post( $id = false ) {
 
 	return false;
 }
-
-/**
- * Set a cron job to remind to micro blog.
- */
-add_action('wp', function() {
-
-	$tz       = get_option('timezone_string');
-	$now 	  = new DateTime("now", new DateTimeZone($tz) );
-
-	if ( ! wp_next_scheduled( MB_CRONJOB_REMINDER ) ) {
-		$tomorrow = $now->format('H') > MB_CRONJOB_REMINDER_HOUR ? 'tomorrow ' : '';
-		$run_next = strtotime("{$tomorrow} 8pm {$tz}");
-		wp_schedule_event($run_next, 'daily', MB_CRONJOB_REMINDER);
-	}
-});
-add_action(MB_CRONJOB_REMINDER, function(){
-	$last_posted = get_option(MB_LAST_POST_OPTION );
-	if ( $last_posted > strtotime( '-24 hours' ) )
-		return; // awesome.
-
-	$message = "'stop being a passive consumer of the internet and join the class of creators' \n\n".esc_url( get_admin_url() );
-	wp_mail( // phpcs:ignore
-		get_option('admin_email'),
-		'Reminder: Micro Blog!',
-		$message
-	);
-});
 
 /**
  * Change Permalinks for single micro blog post pages.
